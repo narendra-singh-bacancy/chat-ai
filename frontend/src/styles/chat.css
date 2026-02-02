@@ -42,7 +42,7 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 1.5rem 0;
+  padding: 0.5rem 0;
   animation: fadeIn 0.3s ease-in;
 }
 
@@ -58,30 +58,39 @@ body {
 }
 
 .message-user {
-  background: #343541;
+  background: transparent;
 }
 
 .message-assistant {
-  background: #444654;
+  background: transparent;
 }
 
 .message-container {
   display: flex;
-  gap: 1.5rem;
+  gap: 0.75rem;
   width: 100%;
   max-width: 768px;
   padding: 0 1rem;
   margin: 0 auto;
+  align-items: flex-start;
+}
+
+.message-user .message-container {
+  flex-direction: row-reverse;
+}
+
+.message-assistant .message-container {
+  flex-direction: row;
 }
 
 .message-avatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
-  border-radius: 2px;
+  border-radius: 50%;
   color: #ececf1;
 }
 
@@ -94,13 +103,26 @@ body {
 }
 
 .message-content {
-  flex: 1;
-  padding-top: 0.25rem;
-  line-height: 1.75;
-  color: #ececf1;
+  max-width: 65%;
+  padding: 0.625rem 0.875rem;
+  line-height: 1.5;
   word-wrap: break-word;
   white-space: pre-wrap;
-  font-size: 1rem;
+  font-size: 0.9375rem;
+  border-radius: 12px;
+  position: relative;
+}
+
+.message-user .message-content {
+  background: #0b93f6;
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.message-assistant .message-content {
+  background: #2f2f2f;
+  color: #ececf1;
+  border-bottom-left-radius: 4px;
 }
 
 .message-content p {
@@ -158,14 +180,12 @@ body {
 
 .chat-input-wrapper.centered {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 2rem 1rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 .chat-input-wrapper.has-messages {
@@ -175,7 +195,13 @@ body {
 
 .chat-input-form {
   width: 100%;
-  max-width: 768px;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.chat-input-wrapper.centered .chat-input-form {
+  max-width: 640px;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -197,7 +223,7 @@ body {
 }
 
 .chat-input-wrapper.centered .input-container {
-  max-width: 640px;
+  width: 100%;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
 }
 
