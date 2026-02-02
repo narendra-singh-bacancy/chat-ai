@@ -29,7 +29,7 @@ export async function streamAIResponse(
 ): Promise<void> {
   try {
     // Add system prompt if not already present
-    const systemPrompt = "You are a helpful AI assistant.";
+    const systemPrompt = process.env.AI_SYSTEM_PROMPT || "You are a helpful AI assistant.";
     const hasSystemMessage = messages.some(msg => msg.role === 'system');
     const messagesWithSystem = hasSystemMessage 
       ? messages 
@@ -37,10 +37,10 @@ export async function streamAIResponse(
 
     // Call Groq API with streaming enabled
     const stream = await groqClient.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
+      model: process.env.AI_MODEL || 'llama-3.1-8b-instant',
       messages: messagesWithSystem,
-      temperature: 0.7,
-      max_tokens: 2048,
+      temperature: parseFloat(process.env.AI_TEMPERATURE || '0.7'),
+      max_tokens: parseInt(process.env.AI_MAX_TOKENS || '2048'),
       stream: true,
     });
 
