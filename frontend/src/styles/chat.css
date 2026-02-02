@@ -110,6 +110,7 @@ body {
   font-size: 0.9375rem;
   border-radius: 12px;
   position: relative;
+  white-space: normal; /* Normal text wrapping */
 }
 
 .message-content > *:first-child {
@@ -134,6 +135,10 @@ body {
 
 .message-content p {
   margin-bottom: 0.75rem;
+}
+
+.message-content p:empty {
+  display: none; /* Hide empty paragraphs */
 }
 
 .message-content p:last-child {

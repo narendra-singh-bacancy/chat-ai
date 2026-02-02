@@ -20,14 +20,32 @@ export function MessageContent({ content, isLoading }: MessageContentProps) {
     return null;
   }
 
+  // Clean up content: remove excessive whitespace and normalize line breaks
+  const cleanedContent = content
+    .replace(/\n{3,}/g, '\n\n') // Replace 3+ newlines with 2
+    .replace(/[ \t]+$/gm, '') // Remove trailing spaces from lines
+    .replace(/^\s*\.\s*$/gm, '') // Remove lines with just dots
+    .replace(/\n\s*\n\s*\n/g, '\n\n') // Remove multiple empty lines
+    .trim();
+
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
       components={{
-        p: ({ children }) => <p>{children}</p>,
+        p: ({ children }) => {
+          // Filter out empty paragraphs
+          const text = String(children).trim();
+          if (!text || text === '') return null;
+          return <p>{children}</p>;
+        },
         ul: ({ children }) => <ul>{children}</ul>,
         ol: ({ children }) => <ol>{children}</ol>,
-        li: ({ children }) => <li>{children}</li>,
+        li: ({ children }) => {
+          // Filter out empty list items
+          const text = String(children).trim();
+          if (!text || text === '') return null;
+          return <li>{children}</li>;
+        },
         strong: ({ children }) => <strong>{children}</strong>,
         em: ({ children }) => <em>{children}</em>,
         code: ({ inline, className, children, ...props }) => {
@@ -48,7 +66,7 @@ export function MessageContent({ content, isLoading }: MessageContentProps) {
         blockquote: ({ children }) => <blockquote>{children}</blockquote>,
       }}
     >
-      {content}
+      {cleanedContent}
     </ReactMarkdown>
   );
 }
