@@ -48,12 +48,13 @@ export function MessageContent({ content, isLoading }: MessageContentProps) {
         },
         strong: ({ children }) => <strong>{children}</strong>,
         em: ({ children }) => <em>{children}</em>,
-        code: ({ inline, className, children, ...props }) => {
+        code: ({ className, children, ...props }: any) => {
           const match = /language-(\w+)/.exec(className || '');
           const language = match ? match[1] : undefined;
           const codeString = String(children).replace(/\n$/, '');
+          const isInline = !className || !className.includes('language-');
 
-          return inline ? (
+          return isInline ? (
             <code {...props}>{children}</code>
           ) : (
             <CodeBlock language={language}>{codeString}</CodeBlock>
