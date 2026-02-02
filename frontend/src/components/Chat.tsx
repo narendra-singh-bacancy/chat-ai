@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useChat } from '../hooks/useChat';
 import { Message } from '../types/chat';
+import { MessageContent } from './MessageContent';
 
 export function Chat() {
   const { messages, isLoading, sendMessage } = useChat();
@@ -66,11 +67,10 @@ export function Chat() {
                   )}
                 </div>
                 <div className="message-content">
-                  {message.content || (isLoading && message.role === 'assistant' ? (
-                    <span className="typing-indicator">
-                      <span></span><span></span><span></span>
-                    </span>
-                  ) : null)}
+                  <MessageContent 
+                    content={message.content} 
+                    isLoading={isLoading && message.role === 'assistant' && !message.content}
+                  />
                 </div>
               </div>
             </div>
