@@ -31,12 +31,18 @@ export function useChat() {
     setIsLoading(true);
 
     try {
+      // Build messages array for API (excluding IDs, only role and content)
+      const apiMessages = [...messages, userMessage].map(msg => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: content.trim() }),
+        body: JSON.stringify({ messages: apiMessages }),
       });
 
       if (!response.ok) {
@@ -80,7 +86,7 @@ export function useChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading]);
+  }, [isLoading, messages]);
 
   return {
     messages,
