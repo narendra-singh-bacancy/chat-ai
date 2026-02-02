@@ -26,6 +26,24 @@ export function Chat() {
     }
   }, [input]);
 
+  // Focus input after sending message
+  useEffect(() => {
+    if (!isLoading && textareaRef.current) {
+      // Small delay to ensure DOM is updated
+      const timer = setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, messages.length]);
+
+  // Initial focus when component mounts
+  useEffect(() => {
+    if (textareaRef.current && !hasMessages) {
+      textareaRef.current.focus();
+    }
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim() && !isLoading) {
@@ -33,6 +51,7 @@ export function Chat() {
       setInput('');
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
+        // Focus will be handled by useEffect when isLoading changes
       }
     }
   };

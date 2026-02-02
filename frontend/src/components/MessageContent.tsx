@@ -1,5 +1,6 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { CodeBlock } from './CodeBlock';
 
 interface MessageContentProps {
   content: string;
@@ -29,13 +30,15 @@ export function MessageContent({ content, isLoading }: MessageContentProps) {
         li: ({ children }) => <li>{children}</li>,
         strong: ({ children }) => <strong>{children}</strong>,
         em: ({ children }) => <em>{children}</em>,
-        code: ({ inline, children, ...props }) => {
+        code: ({ inline, className, children, ...props }) => {
+          const match = /language-(\w+)/.exec(className || '');
+          const language = match ? match[1] : undefined;
+          const codeString = String(children).replace(/\n$/, '');
+
           return inline ? (
             <code {...props}>{children}</code>
           ) : (
-            <pre>
-              <code {...props}>{children}</code>
-            </pre>
+            <CodeBlock language={language}>{codeString}</CodeBlock>
           );
         },
         h1: ({ children }) => <h1>{children}</h1>,
