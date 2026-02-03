@@ -1,11 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
 import { useChat } from '../hooks/useChat';
+import { useAuth } from '../contexts/AuthContext';
 import { Message } from '../types/chat';
 import { MessageContent } from './MessageContent';
+import { GoogleSignIn } from './GoogleSignIn';
+import { Sidebar } from './Sidebar';
+import '../styles/auth.css';
+import '../styles/sidebar.css';
 
 export function Chat() {
+  const { user, loading: authLoading } = useAuth();
   const { messages, isLoading, sendMessage } = useChat();
   const [input, setInput] = useState('');
+  const [sidebarMinimized, setSidebarMinimized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasMessages = messages.length > 0;
@@ -14,35 +21,64 @@ export function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // All hooks must be called before any conditional returns
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (user && messages.length > 0) {
+      scrollToBottom();
+    }
+  }, [messages, user]);
 
   useEffect(() => {
-    // Auto-resize textarea
-    if (textareaRef.current) {
+    if (user && textareaRef.current) {
+      // Auto-resize textarea
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [input]);
+  }, [input, user]);
 
   // Focus input after sending message
   useEffect(() => {
-    if (!isLoading && textareaRef.current) {
+    if (user && !isLoading && textareaRef.current) {
       // Small delay to ensure DOM is updated
       const timer = setTimeout(() => {
         textareaRef.current?.focus();
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [isLoading, messages.length]);
+  }, [isLoading, messages.length, user]);
 
   // Initial focus when component mounts
   useEffect(() => {
-    if (textareaRef.current && !hasMessages) {
+    if (user && textareaRef.current && !hasMessages) {
       textareaRef.current.focus();
     }
-  }, []);
+  }, [user, hasMessages]);
+
+  // Show loading state while checking auth
+  if (authLoading) {
+    return (
+      <div className="chat-container">
+        <div className="auth-container">
+          <div className="typing-indicator">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login screen if not authenticated
+  if (!user) {
+    return (
+      <div className="chat-container">
+        <div className="auth-container">
+          <h1>Chat AI</h1>
+          <p>Sign in with Google to start chatting</p>
+          <GoogleSignIn />
+        </div>
+      </div>
+    );
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +101,12 @@ export function Chat() {
 
   return (
     <div className="chat-container">
-      {hasMessages && (
+      {/* Sidebar */}
+      <Sidebar isMinimized={sidebarMinimized} onToggle={() => setSidebarMinimized(!sidebarMinimized)} />
+
+      {/* Main Content */}
+      <main className="chat-main-content">
+        {hasMessages && (
         <div className="chat-messages">
           {messages.map((message: Message) => (
             <div
@@ -133,6 +174,7 @@ export function Chat() {
           </div>
         </form>
       </div>
+      </main>
     </div>
   );
 }

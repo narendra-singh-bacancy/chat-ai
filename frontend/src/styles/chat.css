@@ -24,6 +24,46 @@ body {
   width: 100%;
   background: #1a1a1f;
   position: relative;
+  overflow: hidden;
+}
+
+.chat-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  margin-left: 260px;
+  transition: margin-left 0.3s ease;
+  position: relative;
+}
+
+.sidebar.minimized ~ .chat-main-content {
+  margin-left: 80px;
+}
+
+@media (max-width: 768px) {
+  .chat-main-content {
+    margin-left: 0;
+  }
+  
+  .sidebar.minimized ~ .chat-main-content {
+    margin-left: 0;
+  }
+  
+  .sidebar.maximized ~ .chat-main-content {
+    margin-left: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-main-content {
+    margin-left: 0;
+  }
+  
+  .chat-main-content.sidebar-open {
+    margin-left: 0;
+  }
 }
 
 /* Messages Area */
@@ -33,7 +73,9 @@ body {
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  padding-bottom: 1rem;
+  padding: 1rem 0;
+  padding-top: calc(1rem + 60px); /* Account for header bar */
+  min-height: 0;
 }
 
 .message-wrapper {
@@ -334,11 +376,14 @@ body {
   width: 100%;
   padding: 0;
   margin: 0;
+  z-index: 1;
 }
 
 .chat-input-wrapper.has-messages {
+  position: relative;
   background: #1a1a1f;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
 
 .chat-input-form {
